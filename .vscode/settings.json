@@ -1,3 +1,5 @@
 {
-    "python-envs.pythonProjects": []
+    "python-envs.pythonProjects": [],
+    "dbt.enableNewLineagePanel": true,
+    "dbt.lineage.defaultExpansion": 30
 }
