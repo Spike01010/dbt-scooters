@@ -13,8 +13,10 @@ left join
     order by
         t.id
     limit
-        75000
+        30000
 {% else %}
     where
-        t.id <= 75000
+        t.id <= 30000
 {% endif %}
+
+
