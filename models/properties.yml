@@ -45,3 +45,5 @@ models:
 
   - name: "trips_users"
     description: "Prepared trips enriched with users data"
+    config:
+      materialized: "incremental"
