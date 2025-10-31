@@ -28,13 +28,17 @@ cumsum_cte as (
     select
         "timestamp",
         sum(increment) over (order by "timestamp") as concurrency
+
     from
         sum_cte
 )
 select
     "timestamp",
-    concurrency
+    concurrency,
+    {{ updated_at() }}
 from
     cumsum_cte
 order by
     1
+
+    

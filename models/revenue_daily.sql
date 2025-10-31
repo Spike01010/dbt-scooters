@@ -30,3 +30,11 @@ group by
     3
 order by
     2
+
+
+
+
+dbt_scooters.events_clean
+dbt_scooters.revenue_daily
+dbt_scooters.trips_concurrency
+dbt_scooters.trips_users
