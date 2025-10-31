@@ -1,3 +1,5 @@
+
+/*
 select
     st_transform(hex.geom, 4326) as geom,
     count(*) as trips
@@ -9,3 +11,8 @@ where
     st_intersects(st_transform(t.finish_point, 3857), hex.geom)
 group by
     1
+
+    */
+
+
+    {{ trips_geom_stat(ref("trips_geom"), geom_col="finish_point", grid=10) }}
