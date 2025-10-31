@@ -1,5 +1,11 @@
 {
     "python-envs.pythonProjects": [],
     "dbt.enableNewLineagePanel": true,
-    "dbt.lineage.defaultExpansion": 30
+    "dbt.lineage.defaultExpansion": 30,
+
+    "python.defaultInterpreterPath": "C:\\Users\\dbudr\\dbt_scooters\\.venv\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true
 }
+
+
+
