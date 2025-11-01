@@ -18,3 +18,6 @@ models:
   dbt_scooters:
     +materialized: table
     +on_schema_change: "append_new_columns"
+
+vars:
+  loaddate: "1900-01-01"

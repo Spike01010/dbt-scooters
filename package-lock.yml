@@ -1,0 +1,11 @@
+packages:
+  - git: https://github.com/henryupton/dbt-scd2-utils.git
+    name: dbt_scd2_utils
+    revision: 8036e2a521799c648aaeba170676df6a10352f09
+  - git: https://github.com/KaterynaD/dbt_scd2_plus.git
+    name: dbt_scd2_plus
+    revision: 8c14fb873dc8388773417a7f63ef74c038671221
+  - name: dbt_utils
+    package: dbt-labs/dbt_utils
+    version: 1.3.1
+sha1_hash: 9f7920e9262804bcf6fcbc46fd49365a7495210f

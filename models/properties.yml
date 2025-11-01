@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: "scooters_raw"  
+  - name: "scooters_raw"
     description: "Raw data provided by scooters service"
     loader: "https://t.me/inzhenerka_dbt_bot"
     tables:
@@ -14,8 +14,6 @@ sources:
       - name: "events"
         description: "Raw user events with duplicates"
 
-
-
 models:
   - name: "trips_prep"
     description: "Trips prepared for analysis"
@@ -23,19 +21,19 @@ models:
       materialized: "view"
 
   - name: "trips_stat"
-    description: "Overall trips statistics"  
+    description: "Overall trips statistics"
 
   - name: "trips_stat_daily"
     description: "Overall trips statistics per day"
     config:
       indexes:
-        - columns: ["date"] 
+        - columns: [ "date" ]
 
   - name: "trips_age_daily"
     description: "Daily trips statistics by user age"
 
   - name: "trips_age_daily_stat"
-    description: "Aggregation of daily trips statistics by user age"  
+    description: "Aggregation of daily trips statistics by user age"
 
   - name: "trips_geom"
     description: "Trips prepared for geometry analysis"
@@ -57,6 +55,21 @@ models:
     description: "User events without duplicates"
     config:
       materialized: "incremental"
+      strategy: "merge"
+      unique_key: [ "user_id", "timestamp", "type_id" ]
+    columns:
+      - name: user_id
+        description: фвмвмфмф
+        data_type: bigint
+      - name: timestamp
+        description: ывммвмф
+        data_type: timestamp without time zone
+      - name: type_id
+        description: мфвмфвмф
+        data_type: bigint
+      - name: updated_at
+        description: фвмфмфмфмф
+        data_type: timestamp with time zone
 
   - name: "revenue_daily"
     description: "Summary daily revenue"

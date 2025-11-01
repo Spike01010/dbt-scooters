@@ -1,0 +1,7 @@
+packages:
+  - git: "https://github.com/henryupton/dbt-scd2-utils.git"
+    revision: main
+
+  - git: "https://github.com/KaterynaD/dbt_scd2_plus.git"
+    revision: master
+
