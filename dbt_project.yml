@@ -1,6 +1,7 @@
 
 name: 'dbt_scooters'
 version: '1.0.0'
+config-version: 2
 profile: 'dbt_scooters'
 
 model-paths: ["models"]
@@ -14,10 +15,19 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+on-run-end:
+    - "grant usage on schema dbt_finance to finance;"
+
+
 models:
   dbt_scooters:
-    +materialized: table
+    +materialized: "table"
     +on_schema_change: "append_new_columns"
+    finance:
+      +schema: "finance"
+      +grants: 
+        select: [ "finance" ]
+
 
 vars:
   loaddate: "1900-01-01"

@@ -87,3 +87,7 @@ dbt_scooters/
 
 *Автор: Spike01010*
 *База знаний: PostgreSQL + dbt + uv*
+
+## Полезные макросы
+
+- `dbt run-operation create_role --args "name: finance"` - создание роли в базе (на примере роли "finance")
