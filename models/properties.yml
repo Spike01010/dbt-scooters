@@ -98,9 +98,6 @@ models:
         data_type: timestamp with time zone
 
 
-
-
-
   - name: "trips_concurrency"
     description: "Количество одновременных поездок во времени"
     config:
