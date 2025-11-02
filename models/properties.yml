@@ -5,38 +5,34 @@ sources:
     description: "Raw data provided by scooters service"
     loader: "https://t.me/inzhenerka_dbt_bot"
 
-
     tables:
 
-    - name: "trips"
-      description: "Scooter trips"
-      loaded_at_field: "finished_at"
-      freshness:
-        warn_after:
-          count: 1
-          period: "day"
-        error_after:
-          count: 3650
-          period: "day"
+      - name: "trips"
+        description: "Scooter trips"
+        loaded_at_field: "finished_at"
+        freshness:
+          warn_after:
+            count: 1
+            period: "day"
+          error_after:
+            count: 3650
+            period: "day"
 
-    - name: "users"
-      description: "Users of scooter service"
-      columns:
-        - name: "sex"
-          description: "User gender"
-          data_tests:
-            - accepted_values:
-                arguments:
-                  values: [ "M", "F" ]
-            - not_null:
-                config:
-                  severity: "warn"
+      - name: "users"
+        description: "Users of scooter service"
+        columns:
+          - name: "sex"
+            description: "User gender"
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: [ "M", "F" ]
+              - not_null:
+                  config:
+                    severity: "warn"
 
-
-
-
-    - name: "events"
-      description: "Raw user events with duplicates"
+      - name: "events"
+        description: "Raw user events with duplicates"
 
 models:
   - name: "trips_prep"
@@ -55,6 +51,9 @@ models:
 
   - name: "trips_age_daily"
     description: "Daily trips statistics by user age"
+    data_tests:
+      - unique:
+          column_name: "date::text || age::text"
 
   - name: "trips_age_daily_stat"
     description: "Aggregation of daily trips statistics by user age"
@@ -81,7 +80,6 @@ models:
 
 
 
-
   - name: "events_clean"
     description: "User events without duplicates"
     config:
@@ -89,30 +87,46 @@ models:
       strategy: "merge"
       unique_key: [ "user_id", "timestamp", "type_id" ]
     columns:
+
       - name: user_id
-        description: фвмвмфмф
         data_type: bigint
       - name: timestamp
-        description: ывммвмф
         data_type: timestamp without time zone
       - name: type_id
-        description: мфвмфвмф
         data_type: bigint
       - name: updated_at
-        description: фвмфмфмфмф
         data_type: timestamp with time zone
 
 
+
+
+
   - name: "trips_concurrency"
-    description: "Number of simultaneous rides in time"
+    description: "Количество одновременных поездок во времени"
     config:
       materialized: "incremental"
+    columns:
+      - name: timestamp
+        description: "Метка времени (с часовой зоной), определяет момент замера одновременных поездок"
+        data_type: timestamp with time zone
+      - name: concurrency
+        description: "Число поездок, происходивших одновременно в момент timestamp"
+        data_type: numeric
+      - name: updated_at
+        description: "Метка времени (с часовой зоной) последнего обновления записи"
+        data_type: timestamp with time zone
+
 
   - name: "companies"
     description: "Scooter satistics by company"
 
   - name: "companies_trips"
     description: "Trip satistics by company"
+    columns:
+      - name: "company"
+        description: "Scooters manufacturing company"
+        data_tests:
+          - unique
 
   - name: "events_full"
     description: "User events enriched with meaningful types"
