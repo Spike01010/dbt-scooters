@@ -4,6 +4,8 @@ sources:
   - name: "scooters_raw"
     description: "Raw data provided by scooters service"
     loader: "https://t.me/inzhenerka_dbt_bot"
+
+
     tables:
 
     - name: "trips"
@@ -19,6 +21,19 @@ sources:
 
     - name: "users"
       description: "Users of scooter service"
+      columns:
+        - name: "sex"
+          description: "User gender"
+          data_tests:
+            - accepted_values:
+                arguments:
+                  values: [ "M", "F" ]
+            - not_null:
+                config:
+                  severity: "warn"
+
+
+
 
     - name: "events"
       description: "Raw user events with duplicates"
