@@ -5,14 +5,23 @@ sources:
     description: "Raw data provided by scooters service"
     loader: "https://t.me/inzhenerka_dbt_bot"
     tables:
-      - name: "trips"
-        description: "Scooter trips"
 
-      - name: "users"
-        description: "Users of scooter service"
+    - name: "trips"
+      description: "Scooter trips"
+      loaded_at_field: "finished_at"
+      freshness:
+        warn_after:
+          count: 1
+          period: "day"
+        error_after:
+          count: 3650
+          period: "day"
 
-      - name: "events"
-        description: "Raw user events with duplicates"
+    - name: "users"
+      description: "Users of scooter service"
+
+    - name: "events"
+      description: "Raw user events with duplicates"
 
 models:
   - name: "trips_prep"
