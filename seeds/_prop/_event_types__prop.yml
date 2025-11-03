@@ -1,0 +1,5 @@
+version: 2
+
+seeds:
+  - name: "event_types"
+    description: "Meaningful types of mobile app events"

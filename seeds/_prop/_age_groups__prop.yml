@@ -1,0 +1,70 @@
+# ===================================================
+# Общая информация:
+# Этот файл описывает настройки проекта dbt:
+#   - модель trips_concurrency
+#   - seed age_groups
+#   - используемые тесты и описания
+# ===================================================
+
+
+version: 2                                                                   # Указывает, что файл спецификации использует версию 2 формата YAML-свойств (schema/properties) для dbt.
+
+seeds:                                                                       # Раздел для описания seed-ресурсов (таблиц, загружаемых через `dbt seed`).
+  - name: "age_groups"                                                       # Имя seed-таблицы (имя CSV/ресурса) — будет использовано как ресурс dbt.
+    description: "Age groups to split users by age for analysis"             # Описание ресурса: поясняет, зачем нужна эта таблица.    
+       
+    docs:                                                                    # Подраздел для настроек документации по ресурсу.
+      show: true                                                             # Указывает, что ресурс должен отображаться в документации (dbt docs).
+      node_color: red                                                        # Указывает, что ресурс должен отображаться в документации (dbt docs).
+
+    latest_version: 1                                                        # (Кастомное поле) Указывает, что текущая «последняя версия» seed-таблицы — версия 1.
+    versions:                                                                # (Кастомное поле) Список доступных версий ресурса.
+      - v: 1
+
+    deprecation_date: 2999-01-01 00:00:00.00+00:00                           # (Кастомное поле) Дата, с которой ожидается устаревание ресурса.
+
+    config:
+      enabled: true                                                          # Включена ли загрузка этого seed-ресурса (true = будет загружаться , false - не будет). 
+      #tags: <string> | [<string>]                                           # Метки (теги) — строка или список строк, для категоризации/фильтрации ресурсов. 
+      #pre_hook: <sql-statement> | [<sql-statement>]                         # SQL-запрос или список SQL-запросов, которые выполняются *до* загрузки seed.  
+      #post_hook: <sql-statement> | [<sql-statement>]                        # SQL-запрос или список SQL-запросов, которые выполняются *после* загрузки seed. 
+      #database: <string>                                                    # Имя базы данных, в которой seed будет создан (переопределяет значение по умолчанию).    
+      #schema: <string>                                                      # Имя схемы (или эквивалент), в которой будет создан seed-ресурс.  
+      #alias: <string>                                                       # Псевдоним таблицы, под которым seed будет создан, вместо имени файла.
+      #persist_docs: <dict>                                                  # Словарь с настройками сохранения описаний (docs) в базе данных (например relation: true/false, columns: true/false). :contentReference[oaicite:0]{index=0}
+      #full_refresh: <boolean>                                               # Флаг — если true, при загрузке seed будет очищена/заменена таблица полностью (или аналогичное поведение).
+      #meta: {<dictionary>}                                                  # Пользовательские метаданные (словарь) — произвольные данные, которые не влияют напрямую на поведение dbt, но используются командой.                             
+      #grants: {<dictionary>}                                                # Словарь с настройками прав доступа (например, GRANT SELECT) на созданный ресурс. :contentReference[oaicite:1]{index=1}
+      #event_time: my_time_field                                             # Имя временного столбца, который обозначает момент “события” для ресурса (используется, например, для microbatch-инкрементов). :contentReference[oaicite:2]{index=2}     
+      contract: {enforced: true}
+      delimiter: ","
+      column_types:
+        group: text
+        age_start: int
+        age_end: int
+
+
+
+
+    columns:
+      - name: "group"
+        description: "Age group name for report"
+        quote: true
+        data_tests:
+          - unique_not_null
+      
+      - name: "age_start"
+        description: "Start age of group"
+        quote: false       
+        column_types: int
+        data_tests: ["unique_not_null"]
+      
+      - name: "age_end"
+        description: "End age of group"
+        quote: false  
+        column_types: int
+        data_tests:
+          - unique_not_null
+
+
+
