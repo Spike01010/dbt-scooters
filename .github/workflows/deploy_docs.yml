@@ -1,37 +1,45 @@
-name: Deploy dbt Docs
+
+name: Deploy dbt docs (Data Catalog) to GitHub Pages
 
 on:
   push:
-    branches:
-      - main  # или master, если у тебя основная ветка так называется
+    branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
-  build-docs:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
 
-      - name: Install dbt (with Postgres adapter)
-        run: pip install dbt-postgres
+      - name: Install dependencies
+        run: uv sync --locked
 
-      - name: Install uv (optional, если используешь uv)
-        run: pip install uv
+      - name: Prepare connection profile
+        run: cp profiles.example.yml profiles.yml
 
-      - name: Install dbt package dependencies
-        run: dbt deps
+      - name: Generate docs
+        run: uv run dbt docs generate
+        env:
+          DBT_ENV_SECRET_PASSWORD: ${{ secrets.DBT_ENV_SECRET_PASSWORD }}
 
-      - name: Generate dbt docs
-        run: dbt docs generate
+      - name: Prepare site files
+        run: |
+          mkdir site
+          cp target/index.html site/
+          cp target/manifest.json site/
+          cp target/catalog.json site/
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Commit site for GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: target
+          publish_dir: site
