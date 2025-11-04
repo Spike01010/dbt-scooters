@@ -1,0 +1,14 @@
+dbt_scooters:
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: postgres          # ← имя пользователя
+      password: "{{ env_var('DBT_ENV_SECRET_PASSWORD') }}"         # ← пароль (в кавычках!)
+      port: 5432
+      dbname: postgres
+      schema: dbt
+      threads: 4
+      keepalives_idle: 0
+      client_encoding: utf8
+  target: dev
