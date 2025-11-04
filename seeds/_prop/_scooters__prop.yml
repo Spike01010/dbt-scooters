@@ -2,6 +2,11 @@ version: 2
 
 seeds:
   - name: "scooters"
-    description: "Scooter models info and statistics"
+    description: >
+      Scooter models information and park statistics by model.
+      Includes information about the manufacturing company.
+      Data received from the service team and uploaded by Mark.
+      Data is current as of summer 2023.
     config:
       delimiter: ","
+

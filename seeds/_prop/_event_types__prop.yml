@@ -2,4 +2,15 @@ version: 2
 
 seeds:
   - name: "event_types"
-    description: "Meaningful types of mobile app events"
+    description: "{{ doc('event_types__docs') }}"
+    columns:
+      - name: "type_id"
+        description: >
+          An integer serving as a unique identifier for each event type.
+          It is used in user event tables as a foreign key to link events to their descriptions
+      - name: "type"
+        description: >
+          A string describing the event type, enhancing the interpretability of event data
+          by providing a human-readable label
+
+
