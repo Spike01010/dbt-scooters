@@ -74,12 +74,6 @@ models:
             columns: [ "date", "age" ]
 
 
-
-
-
-
-
-
   - name: "trips_age_daily_stat"
     description: "Aggregation of daily trips statistics by user age"
 
@@ -98,18 +92,18 @@ models:
     description: "Prepared trips enriched with users data"
     config:
       materialized: "incremental"
-      post-hook:
+      post_hook:
         - "analyze dbt.trips_users"
         - sql: "vacuum dbt.trips_users"
           transaction: false
-
 
 
   - name: "events_clean"
     description: "User events without duplicates"
     config:
       materialized: "incremental"
-      strategy: "merge"
+      incremental_strategy: "merge"
+
       unique_key: [ "user_id", "timestamp", "type_id" ]
     columns:
 
