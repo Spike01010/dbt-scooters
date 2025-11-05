@@ -22,11 +22,11 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked
 
-      # 🔹 Добавляем шаг установки dbt-пакетов
+      # 🔹 Установка dbt-пакетов
       - name: Install dbt packages
         run: uv run dbt deps
 
-      # 🔹 Создаём profiles.yml для подключения к базе
+      # 🔹 Создаём profiles.yml
       - name: Prepare connection profile
         run: |
           mkdir -p ~/.dbt
@@ -44,11 +44,25 @@ jobs:
             target: dev
           EOL
 
+      # 🧩 Временная проверка секретов
+      - name: Debug secrets (temporary)
+        run: |
+          echo "DBT_HOST=${{ secrets.DBT_HOST }}"
+          echo "DBT_USER=${{ secrets.DBT_USER }}"
+          if [ -z "${{ secrets.DBT_PASSWORD }}" ]; then
+            echo "❌ DBT_PASSWORD is empty!"
+            exit 1
+          else
+            echo "✅ DBT_PASSWORD is set."
+          fi
+
+      # 🔹 Генерация документации dbt
       - name: Generate docs
         run: uv run dbt docs generate --profiles-dir ~/.dbt
         env:
           DBT_ENV_SECRET_PASSWORD: ${{ secrets.DBT_PASSWORD }}
 
+      # 🔹 Подготовка файлов сайта
       - name: Prepare site files
         run: |
           mkdir site
@@ -56,6 +70,7 @@ jobs:
           cp target/manifest.json site/
           cp target/catalog.json site/
 
+      # 🔹 Публикация на GitHub Pages
       - name: Commit site for GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
