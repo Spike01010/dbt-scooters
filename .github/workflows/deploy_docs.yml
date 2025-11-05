@@ -12,24 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    # 🔹 Используем переменные окружения
-    env:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
-      POSTGRES_SCHEMA: dbt
-      POSTGRES_PASSWORD: ${{ secrets.DBT_PASSWORD || '123' }}  # если нет секрета — используется локальный пароль
-
     services:
       postgres:
         image: postgres:15
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.DBT_PASSWORD || '123' }}
+          POSTGRES_DB: postgres
         options: >-
-          --health-cmd "pg_isready -U ${{ env.POSTGRES_USER }}"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -56,11 +49,11 @@ jobs:
               dev:
                 type: postgres
                 host: localhost
-                user: $POSTGRES_USER
-                password: "$POSTGRES_PASSWORD"
+                user: postgres
+                password: "${{ secrets.DBT_PASSWORD || '123' }}"
                 port: 5432
-                dbname: $POSTGRES_DB
-                schema: $POSTGRES_SCHEMA
+                dbname: postgres
+                schema: dbt
                 threads: 4
                 keepalives_idle: 0
                 client_encoding: utf8
@@ -70,7 +63,7 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until pg_isready -h localhost -p 5432 -U $POSTGRES_USER; do
+          until pg_isready -h localhost -p 5432 -U postgres; do
             echo "⏳ Waiting for Postgres..."
             sleep 3
           done
@@ -79,7 +72,7 @@ jobs:
       - name: Generate docs
         run: uv run dbt docs generate --profiles-dir ~/.dbt
         env:
-          DBT_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          DBT_PASSWORD: ${{ secrets.DBT_PASSWORD || '123' }}
 
       - name: Prepare site files
         run: |
