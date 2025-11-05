@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    env:
+      POSTGRES_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+
     services:
       postgres:
         image: postgres:15
@@ -66,6 +69,10 @@ jobs:
             echo "Waiting for Postgres..."
             sleep 3
           done
+
+      - name: Debug DB connection
+        run: |
+          psql "postgresql://postgres:${{ secrets.DBT_PASSWORD }}@localhost:5432/postgres" -c "SELECT version();"
 
       - name: Generate docs
         run: uv run dbt docs generate --profiles-dir ~/.dbt
