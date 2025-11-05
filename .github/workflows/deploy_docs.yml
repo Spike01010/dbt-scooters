@@ -12,8 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    # 🔹 Используем переменные окружения
     env:
-      POSTGRES_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_SCHEMA: dbt
+      POSTGRES_PASSWORD: ${{ secrets.DBT_PASSWORD || '123' }}  # если нет секрета — используется локальный пароль
 
     services:
       postgres:
@@ -21,11 +25,11 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ${{ secrets.DBT_PASSWORD }}
-          POSTGRES_DB: postgres
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
         options: >-
-          --health-cmd "pg_isready -U postgres"
+          --health-cmd "pg_isready -U ${{ env.POSTGRES_USER }}"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -52,32 +56,30 @@ jobs:
               dev:
                 type: postgres
                 host: localhost
-                user: postgres
-                password: "${{ secrets.DBT_PASSWORD }}"
+                user: $POSTGRES_USER
+                password: "$POSTGRES_PASSWORD"
                 port: 5432
-                dbname: postgres
-                schema: dbt
+                dbname: $POSTGRES_DB
+                schema: $POSTGRES_SCHEMA
                 threads: 4
                 keepalives_idle: 0
                 client_encoding: utf8
             target: dev
           EOL
+          echo "✅ profiles.yml created successfully"
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until pg_isready -h localhost -p 5432 -U postgres; do
-            echo "Waiting for Postgres..."
+          until pg_isready -h localhost -p 5432 -U $POSTGRES_USER; do
+            echo "⏳ Waiting for Postgres..."
             sleep 3
           done
-
-      - name: Debug DB connection
-        run: |
-          psql "postgresql://postgres:${{ secrets.DBT_PASSWORD }}@localhost:5432/postgres" -c "SELECT version();"
+          echo "✅ PostgreSQL is ready!"
 
       - name: Generate docs
         run: uv run dbt docs generate --profiles-dir ~/.dbt
         env:
-          DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+          DBT_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
 
       - name: Prepare site files
         run: |
