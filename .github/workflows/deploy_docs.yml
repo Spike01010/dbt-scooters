@@ -86,3 +86,9 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: site
+
+
+      - name: Install dependencies
+        run: |
+          uv sync --locked
+          uv run dbt deps
